@@ -28,7 +28,7 @@ def update_sheep(id: int, sheep: Sheep):
     db.data[id] = sheep
     return sheep
 
-@app.delete("/sheep/{id}")
+@app.delete("/sheep/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_sheep(id: int):
     if id not in db.data:
         raise HTTPException(status_code=404, detail="Sheep with this ID does not exist")

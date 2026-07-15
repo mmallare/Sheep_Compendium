@@ -37,3 +37,43 @@ def test_add_sheep():
     get_response = client.get(f"/sheep/{new_sheep['id']}")
     assert get_response.status_code == 200
     assert get_response.json() == new_sheep
+
+def test_read_all_sheep():
+    response = client.get("/sheep")
+    sheep_list = response.json()
+
+    assert response.status_code == 200
+    assert len(sheep_list) >= 6
+    assert {
+               "id": 1,
+               "name": "Spice",
+               "breed": "Gotland",
+               "sex": "ewe"
+           } in sheep_list
+
+def test_update_sheep():
+    updated_sheep = {
+        "id": 2,
+        "name": "Blondie",
+        "breed": "Polypay",
+        "sex" : "ewe" #initially was 'ram'
+    }
+
+    response = client.put(f"/sheep/{updated_sheep['id']}", json=updated_sheep)
+
+    assert response.status_code == 200
+    assert response.json() == updated_sheep
+
+def test_delete_sheep():
+    sheep_to_delete = {
+        "id": 3,
+        "name": "Deedee",
+        "breed": "Jacobs Four Horns",
+        "sex" : "ram"
+    }
+
+    response = client.delete(f"/sheep/{sheep_to_delete['id']}")
+    assert response.status_code == 204
+    get_response = client.get(f"/sheep/{sheep_to_delete['id']}")
+    assert get_response.status_code == 200
+    assert get_response.json() is None
