@@ -4,6 +4,11 @@ from models.models import Sheep
 
 app = FastAPI()
 
+# reads all sheep
+@app.get("/sheep/", response_model=list[Sheep])
+def read_all_sheep():
+    return list(db.data.values())
+
 @app.get("/sheep/{id}")
 def read_sheep(id: int):
     return db.get_sheep(id)
@@ -14,3 +19,17 @@ def add_sheep(sheep: Sheep):
         raise HTTPException(status_code=400, detail="Sheep with this ID already exists")
     db.data[sheep.id] = sheep
     return sheep
+
+#update sheep
+@app.put("/sheep/{id}", response_model=Sheep)
+def update_sheep(id: int, sheep: Sheep):
+    if id not in db.data:
+        raise HTTPException(status_code=404, detail="Sheep with this ID does not exist")
+    db.data[id] = sheep
+    return sheep
+
+@app.delete("/sheep/{id}")
+def delete_sheep(id: int):
+    if id not in db.data:
+        raise HTTPException(status_code=404, detail="Sheep with this ID does not exist")
+    del db.data[id]
